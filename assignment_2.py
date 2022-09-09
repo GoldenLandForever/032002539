@@ -73,6 +73,3 @@ def assignment_2():
         write2excel_null['无症状感染者'] = data2.values()
         write2excel_null.to_excel('各省份' + date_Get[0] +'无症状感染者疫情通报.xlsx')
         break
-
-if __name__ == '__main__':
-    assignment_2()
