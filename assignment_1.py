@@ -1,57 +1,35 @@
 import re
 import time
-import requests
-from openpyxl.workbook import Workbook
+import pyecharts
+from pyecharts.charts import Bar
+import my_Selenium
 import pandas as pd
-from pandas import Series
 
-
-def getUrl_dir():
-    # 定义url
+def assignment_1():
+    # 获取url
     url_dir = "http://www.nhc.gov.cn/xcs/yqtb/list_gzbd.shtml"
-    # 获取cookie
-    rs = requests.get(url_dir)
-    cookie = ""
-    for k, v in rs.cookies.items():
-        cookie += k + '=' + v + ';'
 
-    # 定义请求头
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.27"
-    }
-    headers["Cookie"] = cookie
-
-    # 发送请求，获取响应
-    response = requests.get(url_dir, headers=headers)
-
-    # 解码
-    response.raise_for_status()
-    response.encoding = response.apparent_encoding
-    contents_directory = response.text
-
-    content_directory = re.findall('href="(.*?)" target', contents_directory, re.DOTALL)
-    return content_directory, headers
-
-
-def assignment():
-    content_directory, headers = getUrl_dir()
+    #正则筛url
+    contents_directory = my_Selenium.getURL_dir(url_dir)
+    contents_directory = re.findall('<ul class="zxxx_list">.*?</ul>',contents_directory,re.DOTALL)
+    content_directory = re.findall('href="(.*?)" target', contents_directory[0], re.DOTALL)
     i = 0
     for url_target_half in content_directory:
         url_target = "http://www.nhc.gov.cn" + url_target_half  # 生成目标URL
-        res = requests.get(url_target, headers=headers)
-        # res.raise_for_status()
-        res.encoding = res.apparent_encoding
-        contents_target = res.text
-
+        #打开网页
+        contents_target = my_Selenium.getURL_dir(url_target)
         # 获取时间
         date_Get = re.findall('<div class="tit">截至(.*?)24时', contents_target)
+        #获取全部段落
         content_target = re.findall('<p style="text-align: justify;.*?</p>', contents_target, re.DOTALL)
 
         data = {}
 
         if not content_target:
             continue
+        #分时间正则
         if date_Get[0] > '8月30日':
+            #从目标段落找关键词
             newCases = re.findall('新增确诊病例.*?16pt;">(.*?)</span>', content_target[0], re.DOTALL)[0]
             newCases_null = re.findall('新增无症状感染者.*?16pt;">(.*?)</span>', content_target[4], re.DOTALL)[0]
             data["新增确诊"] = newCases
