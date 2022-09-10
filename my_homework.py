@@ -1,5 +1,10 @@
 import re
 import my_Selenium
+import pyecharts
+from pyecharts.charts import Bar
+from pyecharts.globals import ThemeType
+from pyecharts import options as opts
+from pyecharts.charts import *
 import pandas as pd
 def City(city):
     #判断数据是否是需要统计的城市
@@ -14,6 +19,18 @@ def write2excel(data,cn1,cn2,name):
     write2exce[cn1] = data.keys()
     write2exce[cn2] = data.values()
     write2exce.to_excel(name)
+
+def my_Bar(data,name):
+    bar = Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
+    bar.add_xaxis(list(data.keys()))
+    bar.add_yaxis("新增人数", list(map(int, data.values())), category_gap= '80%')
+    bar.set_global_opts(
+        title_opts=opts.TitleOpts(title=name),
+        # 设置数据缩放滑块
+        datazoom_opts=opts.DataZoomOpts(),
+    )
+    bar.render(name)
+
 
 def my_main():
     # 获取url
@@ -69,13 +86,17 @@ def my_main():
                     data_null[city_null_key[i]] = city_null_value[i]
 
             #港澳台数据
-            other_newcases = re.findall('港澳台地区通报(.*?)）。',text)[0]
-            data_newcases['香港特别行政区'] = re.findall('香港特别行政区([0-9]+?)例',other_newcases)[0]
-            data_newcases['澳门特别行政区'] = re.findall('澳门特别行政区([0-9]+?)例',other_newcases)[0]
-            data_newcases['台湾地区'] = re.findall('台湾地区([0-9]+?)例',other_newcases)[0]
+            #other_newcases = re.findall('港澳台地区通报(.*?)）。',text)[0]
+            #data_newcases['香港特别行政区'] = re.findall('香港特别行政区([0-9]+?)例',other_newcases)[0]
+            #data_newcases['澳门特别行政区'] = re.findall('澳门特别行政区([0-9]+?)例',other_newcases)[0]
+            #data_newcases['台湾地区'] = re.findall('台湾地区([0-9]+?)例',other_newcases)[0]
             #导出execel表格
             write2excel(data=data_nation, cn1='新增类型', cn2='新增数量', name='中国大陆' + date_Get[0] + '疫情通报.xlsx')
             write2excel(data_newcases,'省份','新增确诊','各省份' + date_Get[0] + '新增确诊疫情通报.xlsx')
             write2excel(data_null,'省份','无症状感染者','各省份' + date_Get[0] + '无症状感染者疫情通报.xlsx')
-
+            #数据可视化
+            my_Bar(data_nation,'中国大陆'+date_Get[0]+'疫情柱状图.html')
+            my_Bar(data_newcases,'各省份'+date_Get[0]+'新增确诊柱状图.html')
+            my_Bar(data_null,'各省份'+date_Get[0]+'新增无症状柱状图.html')
+            
 my_main()
