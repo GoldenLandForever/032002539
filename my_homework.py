@@ -1,7 +1,5 @@
 import re
 import my_Selenium
-import pyecharts
-from pyecharts.charts import Bar
 from pyecharts.globals import ThemeType
 from pyecharts import options as opts
 from pyecharts.charts import *
@@ -51,6 +49,7 @@ def my_main():
             contents_target = my_Selenium.getURL_dir(url_target)
             # 获取时间
             date_Get = re.findall('<div class="tit">截至(.*?)24时', contents_target)
+            date_Get_year = re.findall('<span>发布时间.+?([0-9]{4})', contents_target, re.DOTALL)
             #获取全部段落
             content_target = re.findall('>(.*?)<', contents_target)
             text = ''
@@ -85,18 +84,15 @@ def my_main():
                 if City(city_null_key[i]) == 1 :
                     data_null[city_null_key[i]] = city_null_value[i]
 
-            #港澳台数据
-            #other_newcases = re.findall('港澳台地区通报(.*?)）。',text)[0]
-            #data_newcases['香港特别行政区'] = re.findall('香港特别行政区([0-9]+?)例',other_newcases)[0]
-            #data_newcases['澳门特别行政区'] = re.findall('澳门特别行政区([0-9]+?)例',other_newcases)[0]
-            #data_newcases['台湾地区'] = re.findall('台湾地区([0-9]+?)例',other_newcases)[0]
             #导出execel表格
-            write2excel(data=data_nation, cn1='新增类型', cn2='新增数量', name='中国大陆' + date_Get[0] + '疫情通报.xlsx')
-            write2excel(data_newcases,'省份','新增确诊','各省份' + date_Get[0] + '新增确诊疫情通报.xlsx')
-            write2excel(data_null,'省份','无症状感染者','各省份' + date_Get[0] + '无症状感染者疫情通报.xlsx')
+            write2excel(data=data_nation, cn1='新增类型', cn2='新增数量', name='中国大陆'+date_Get_year[0]+'年' + date_Get[0] + '疫情通报.xlsx')
+            write2excel(data_newcases,'省份','新增确诊','各省份'+date_Get_year[0]+'年' + date_Get[0] + '新增确诊疫情通报.xlsx')
+            write2excel(data_null,'省份','无症状感染者','各省份'+date_Get_year[0]+'年' + date_Get[0] + '无症状感染者疫情通报.xlsx')
             #数据可视化
-            my_Bar(data_nation,'中国大陆'+date_Get[0]+'疫情柱状图.html')
-            my_Bar(data_newcases,'各省份'+date_Get[0]+'新增确诊柱状图.html')
-            my_Bar(data_null,'各省份'+date_Get[0]+'新增无症状柱状图.html')
-            
-my_main()
+            my_Bar(data_nation,'中国大陆'+date_Get_year[0]+'年'+date_Get[0]+'疫情柱状图.html')
+            my_Bar(data_newcases,'各省份'+date_Get_year[0]+'年'+date_Get[0]+'新增确诊柱状图.html')
+            my_Bar(data_null,'各省份'+date_Get_year[0]+'年'+date_Get[0]+'新增无症状柱状图.html')
+
+
+if __name__ == '__main__':
+    my_main()
