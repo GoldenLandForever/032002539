@@ -3,10 +3,12 @@ import my_Selenium
 import my_homework
 
 def other_regions():
+    #用于记录总确诊人数数据
     data_HK = -1
     data_AM = -1
     data_TW = -1
     date_Get_early = ''
+    #获取不同网页的url
     for cnt in range(1, 40):
         if cnt == 1:
             url_dir = "http://www.nhc.gov.cn/xcs/yqtb/list_gzbd.shtml"
@@ -35,6 +37,7 @@ def other_regions():
             # 港澳台数据
             other_newcases = re.findall('港澳台地区通报(.*?)）。', text)[0]
             if data_HK != -1:
+                #当记录有前一天数据，相减即可以获得新增数据
                 data_newcases['香港特别行政区'] = data_HK - int(re.findall('香港特别行政区([0-9]+?)例', other_newcases)[0])
                 data_newcases['澳门特别行政区'] = data_AM - int(re.findall('澳门特别行政区([0-9]+?)例', other_newcases)[0])
                 data_newcases['台湾地区'] =data_TW - int(re.findall('台湾地区([0-9]+?)例', other_newcases)[0])
@@ -42,19 +45,20 @@ def other_regions():
                 data_AM = int(re.findall('澳门特别行政区([0-9]+?)例', other_newcases)[0])
                 data_TW = int(re.findall('台湾地区([0-9]+?)例', other_newcases)[0])
             else:
+                #当没有记录前一天数据，即记录当天数据
                 data_HK = int(re.findall('香港特别行政区([0-9]+?)例', other_newcases)[0])
                 data_AM = int(re.findall('澳门特别行政区([0-9]+?)例', other_newcases)[0])
                 data_TW = int(re.findall('台湾地区([0-9]+?)例', other_newcases)[0])
 
             # 导出execel表格
             if date_Get_early == '':
+                #日期更改
                 date_Get_early = date_Get[0]
             else:
                 my_homework.write2excel(data_newcases,'省份','新增确诊','港澳台地区'+date_Get_year[0]+'年' + date_Get_early + '新增确诊疫情通报.xlsx')
             # 数据可视化
                 my_homework.my_Bar(data_newcases, '港澳台地区' +date_Get_year[0]+'年'+date_Get_early + '新增确诊柱状图.html')
                 date_Get_early = date_Get[0]
-        break
 
 if __name__ == '__main__':
     other_regions()
