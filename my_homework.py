@@ -7,7 +7,7 @@ import pandas as pd
 def City(city):
     #判断数据是否是需要统计的城市
     list = ['河北', '山西', '辽宁', '吉林', '黑龙江', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '海南',
-                 '四川', '贵州', '云南', '陕西', '甘肃', '青海', '内蒙古', '广西', '西藏', '宁夏', '新疆', '北京', '天津', '上海', '重庆']
+                 '四川', '贵州', '云南', '陕西', '甘肃', '青海', '内蒙古', '广西', '西藏', '宁夏', '新疆', '北京', '天津', '上海', '重庆','兵团']
 
     return list.count(city)
 
@@ -92,7 +92,8 @@ def my_main():
             my_Bar(data_nation,'中国大陆'+date_Get_year[0]+'年'+date_Get[0]+'疫情柱状图.html')
             my_Bar(data_newcases,'各省份'+date_Get_year[0]+'年'+date_Get[0]+'新增确诊柱状图.html')
             my_Bar(data_null,'各省份'+date_Get_year[0]+'年'+date_Get[0]+'新增无症状柱状图.html')
-
+            #数据热点
+            my_Selenium.hot_spot('疫情 '+date_Get_year[0]+'年'+date_Get[0])
 
 if __name__ == '__main__':
     my_main()
