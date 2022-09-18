@@ -12,8 +12,9 @@ def getURL_dir(url_dir):
     return text
 
 def hot_spot(word):
+    #通过获得百度的疫情每日热点获得每日热点
     url_baidu = 'http://www.baidu.com'
-
+    #绝对路径打开Edge浏览器，也可以替换成google
     browser = webdriver.Edge("C:\Program Files (x86)\Microsoft\Edge\Application\msedgedriver.exe")
 
     browser.get(url_baidu)
@@ -22,11 +23,12 @@ def hot_spot(word):
 
     # id是su的是搜索的按钮，用click方法点击
     browser.find_element_by_id('su').click()
-
+    
     driver = webdriver.Edge("C:\Program Files (x86)\Microsoft\Edge\Application\msedgedriver.exe")
     driver.get(browser.current_url)
     text = driver.page_source
     browser.close()
+    #正则获取信息
     url = re.findall('class="group-content_3jCZd .*?href="(.+?)"',text,re.DOTALL)[0]
 
     title = re.findall('class="group-content_3jCZd .*?标题：(.*?)"',text,re.DOTALL)[0]
