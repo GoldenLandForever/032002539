@@ -19,6 +19,7 @@ def write2excel(data,cn1,cn2,name):
     write2exce.to_excel(name)
 
 def my_Bar(data,name):
+    #使用Bar导出柱状图
     bar = Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
     bar.add_xaxis(list(data.keys()))
     bar.add_yaxis("新增人数", list(map(int, data.values())), category_gap= '80%')
